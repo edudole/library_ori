@@ -19,7 +19,7 @@
 
   async function api(action, data = {}) {
     if (!API) throw new Error('ไม่พบ URL ของ Apps Script');
-    const token = sessionStorage.getItem('mysiteAdminToken') || '';
+    const token = sessionStorage.getItem('LP360:LIBRARY:mysiteAdminToken') || '';
     const response = await fetch(API, {
       method: 'POST',
       cache: 'no-store',

@@ -1653,7 +1653,7 @@ let detailSlideCount = 0;
       return qrCodeLibraryPromise_;
     }
 
-    const LEARNING_PAGE_CACHE_VERSION = 'learning-page-fast-v3';
+    const LEARNING_PAGE_CACHE_VERSION = 'LP360:LIBRARY:learning-page-fast-v3';
     const LEARNING_PAGE_CACHE_MAX_AGE = 24 * 60 * 60 * 1000;
 
     function learningCacheKey_(suffix) {
@@ -2628,10 +2628,10 @@ function updateStats() {
     }
 
     function getSessionId() {
-      let id = localStorage.getItem('learning_session_id');
+      let id = localStorage.getItem('LP360:LIBRARY:learning_session_id');
       if (!id) {
         id = 'SS-' + Date.now() + '-' + Math.random().toString(36).slice(2);
-        localStorage.setItem('learning_session_id', id);
+        localStorage.setItem('LP360:LIBRARY:learning_session_id', id);
       }
       return id;
     }
