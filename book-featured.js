@@ -35,7 +35,13 @@
     const grid = document.getElementById('allBooksGrid');
     if (!slides || !grid) return;
     if (!BOOK_API_URL) {
-      slides.innerHTML = '<div class="book-loading">ไม่พบ URL ของ Apps Script</div>';
+      if (window.LP360Progress?.finishAndSwap) {
+        window.LP360Progress.finishAndSwap(slides, () => {
+          slides.innerHTML = '<div class="book-loading">ไม่พบ URL ของ Apps Script</div>';
+        }, 90);
+      } else {
+        slides.innerHTML = '<div class="book-loading">ไม่พบ URL ของ Apps Script</div>';
+      }
       return;
     }
 
@@ -48,19 +54,31 @@
       const raw = result.data || result.books || result;
       books = (Array.isArray(raw) ? raw : []).map(normalizeBook).filter(book => book.title || book.image);
       if (!books.length) {
-        slides.innerHTML = '<div class="book-loading">ยังไม่มีรายการหนังสือในชีต book</div>';
-        grid.innerHTML = '';
-        document.getElementById('bookDots')?.replaceChildren();
+        const showEmpty = () => {
+          slides.innerHTML = '<div class="book-loading">ยังไม่มีรายการหนังสือในชีต book</div>';
+          grid.innerHTML = '';
+          document.getElementById('bookDots')?.replaceChildren();
+        };
+        if (window.LP360Progress?.finishAndSwap) window.LP360Progress.finishAndSwap(slides, showEmpty, 90);
+        else showEmpty();
         return;
       }
 
       activeBookIndex = 0;
-      renderBookSlider();
-      renderAllBooks();
-      startBookAutoSlide();
+      const showBooks = () => {
+        renderBookSlider();
+        renderAllBooks();
+        startBookAutoSlide();
+      };
+      if (window.LP360Progress?.finishAndSwap) window.LP360Progress.finishAndSwap(slides, showBooks, 90);
+      else showBooks();
     } catch (error) {
       console.error('โหลดรายการหนังสือไม่สำเร็จ:', error);
-      slides.innerHTML = `<div class="book-loading">โหลดรายการหนังสือไม่สำเร็จ: ${escapeHtml(error.message)}</div>`;
+      const showError = () => {
+        slides.innerHTML = `<div class="book-loading">โหลดรายการหนังสือไม่สำเร็จ: ${escapeHtml(error.message)}</div>`;
+      };
+      if (window.LP360Progress?.finishAndSwap) window.LP360Progress.finishAndSwap(slides, showError, 90);
+      else showError();
     }
   }
 
