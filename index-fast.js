@@ -2084,7 +2084,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       return;
     }
 
-    grid.innerHTML = '<div class="lsb-loading">กำลังโหลดแหล่งส่งเสริมการอ่านในชุมชน...</div>';
+    grid.innerHTML = '<div class="lsb-loading section-loading-with-spinner"><span class="section-loading-spinner" aria-hidden="true"></span>กำลังโหลดแหล่งส่งเสริมการอ่านในชุมชน...</div>';
 
     if (window.SiteFast) {
       window.SiteFast.fetchMode('learningAreas', { v: '7' }, {
@@ -2193,6 +2193,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       .sort((a, b) => dateValue(b.date) - dateValue(a.date) || Number(b.order || 0) - Number(a.order || 0));
 
     if (!rows.length) {
+      status.classList.remove('section-loading-with-spinner');
       status.hidden = false;
       status.textContent = 'ยังไม่มีรายการ Best Practice ในชีต best_practice';
       slider.hidden = true;
@@ -2200,6 +2201,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       return;
     }
 
+    status.classList.remove('section-loading-with-spinner');
     status.hidden = true;
     slider.hidden = false;
 
@@ -2290,7 +2292,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     if (!status) return;
 
     status.hidden = false;
-    status.textContent = 'กำลังโหลด Best Practice...';
+    status.classList.add('section-loading-with-spinner');
+    status.innerHTML = '<span class="section-loading-spinner" aria-hidden="true"></span>กำลังโหลด Best Practice...';
     if (slider) slider.hidden = true;
 
     loadPromise = (async () => {
@@ -2303,6 +2306,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         render(items);
       } catch (error) {
         console.error('Best Practice Box:', error);
+        status.classList.remove('section-loading-with-spinner');
         status.hidden = false;
         status.textContent = 'โหลด Best Practice ไม่สำเร็จ: ' + (error?.message || 'ไม่ทราบสาเหตุ');
         if (slider) slider.hidden = true;
@@ -2567,7 +2571,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const track = document.getElementById('bossTrack');
     if (!box || !track) return;
     box.removeAttribute('hidden');
-    track.innerHTML = `<div class="boss-carousel-status${isError ? ' is-error' : ''}">${esc(message || '')}</div>`;
+    const isLoading = String(message || '').startsWith('กำลังโหลด');
+    track.innerHTML = `<div class="boss-carousel-status${isError ? ' is-error' : ''}${isLoading ? ' section-loading-with-spinner' : ''}">${isLoading ? '<span class="section-loading-spinner" aria-hidden="true"></span>' : ''}${esc(message || '')}</div>`;
     const prev = document.getElementById('bossPrev');
     const next = document.getElementById('bossNext');
     if (prev) prev.hidden = true;
@@ -2957,7 +2962,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         const delay = retryDelay(attempt);
         console.warn(`Cliproom resolver retry #${attempt}:`, error);
         if (!courses.length) {
-          track.innerHTML = `<div class="cliproom-loading">กำลังเชื่อมต่อระบบหลักสูตร...<br><small>ลองใหม่อัตโนมัติ ครั้งที่ ${attempt}</small></div>`;
+          track.innerHTML = `<div class="cliproom-loading"><span class="cliproom-spinner"></span><span>กำลังเชื่อมต่อระบบหลักสูตร...<br><small>ลองใหม่อัตโนมัติ ครั้งที่ ${attempt}</small></span></div>`;
         }
         await waitRetry(delay);
       }
@@ -3101,7 +3106,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         const delay = retryDelay(attempt);
         console.warn(`Cliproom catalog retry #${attempt}:`, error);
         if (!courses.length) {
-          track.innerHTML = `<div class="cliproom-loading">กำลังโหลดรายการหลักสูตร...<br><small>เชื่อมต่อไม่สำเร็จ ระบบจะลองใหม่อัตโนมัติ ครั้งที่ ${attempt}</small></div>`;
+          track.innerHTML = `<div class="cliproom-loading"><span class="cliproom-spinner"></span><span>กำลังโหลดรายการหลักสูตร...<br><small>เชื่อมต่อไม่สำเร็จ ระบบจะลองใหม่อัตโนมัติ ครั้งที่ ${attempt}</small></span></div>`;
         }
         await waitRetry(delay);
       }
