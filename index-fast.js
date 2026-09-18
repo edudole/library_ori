@@ -1480,6 +1480,7 @@ async function openNewsPopup(item) {
 const API=window.APP_CONFIG.API_URL;
 const builtins=[
   {id:'featured',kind:'builtin',title:'หนังสือที่น่าสนใจ',visible:true},
+  {id:'readBookTimeBox',kind:'builtin',title:'อ่านหนังสือสะสมเวลา',visible:true},
   {id:'learningSourceBox',kind:'builtin',title:'แหล่งส่งเสริมการอ่านในชุมชน',visible:true},
   {id:'bestPracticeBox',kind:'builtin',title:'Best Practice',visible:true},
   {id:'FBpostBox',kind:'builtin',title:'Facebook',visible:true},
@@ -1516,7 +1517,7 @@ function normalize(items){
   const incoming=Array.isArray(items)?items:[];
   const out=[],seen=new Set();
   incoming.forEach(raw=>{const item=normalizeItem(raw);if(item&&!seen.has(item.id)){seen.add(item.id);out.push(item)}});
-  builtins.forEach(base=>{if(!seen.has(base.id))out.push({...base})});
+  builtins.forEach(base=>{if(seen.has(base.id))return;if(base.id==='readBookTimeBox'){const at=out.findIndex(item=>item.id==='featured');if(at>=0)out.splice(at+1,0,{...base});else out.unshift({...base});}else out.push({...base})});
   return out;
 }
 async function getLayout(){
